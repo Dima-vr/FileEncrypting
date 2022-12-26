@@ -1,0 +1,6 @@
+1 2 -3 3 -2  0 4
+The encrypted file is a list of numbers. To mix the file, move each number
+forward or backward in the file a number of positions equal to the value of
+the number being moved. The list is circular, so moving a number off one
+end of the list wraps back around to the other end as if the ends were
+connected.

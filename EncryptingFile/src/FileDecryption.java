@@ -26,23 +26,26 @@ public class FileDecryption {
     public static void main(String[] args) {
         FileDecryption test = new FileDecryption();
         System.out.println(test.encryptedFileData);
-        System.out.println(test.mixFile(1000));
+        ArrayList<Integer> mixedFile = test.mixFile();
+        int sum = 0;
+        for (int i = 1; i <= 3; i++) {
+            sum += mixedFile.get((mixedFile.indexOf(0) + (1000 * i)) % test.encryptedFileData.size());
+        }
+        System.out.println(sum);
     }
 
-    public int mixFile(int n) {
+    public ArrayList<Integer> mixFile() {
         ArrayList<Integer> mixList = new ArrayList<>(encryptedFileData.stream().toList());
         int size = encryptedFileData.size();
         int index = 0;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < size; i++) {
             //Calculate the index in encryptedFileData
             int indexInFile = i % size;
+            //TODO problem: in file can be the same numbers.
+            // solution: Index of each number
             //Calculate the index in mixList( if encryptedFileData[indexInFile] = 3
-            //that mean we need to find which index in mixList[index] = encryptedFileData[indexInFile]
-            for (int k = 0; k < mixList.size(); k++) {
-                if (mixList.get(k).equals(encryptedFileData.get(indexInFile))) {
-                    index = k;
-                }
-            }
+            //that mean we need to find which index in mixList[index] = 3
+            index = mixList.indexOf(encryptedFileData.get(indexInFile));
             int shift = mixList.get(index);
             //Calculate the new index where we put our element
             int newIndex = index + shift - (shift < 0 ? 1 : 0);
@@ -55,18 +58,18 @@ public class FileDecryption {
             //Move elements between the starting index of the element and the index where it will be
             if (newIndex - index > 0) {
                 for (int j = index; j < newIndex; j++) {
-                    mixList.set((j) % size, mixList.get(j + 1) % size);
+                    mixList.set((j) % size, mixList.get((j + 1) % size));
                 }
                 mixList.set(newIndex, shift);
             }
             if (newIndex - index < 0) {
                 for (int j = index; j > newIndex; j--) {
-                    mixList.set((j) % size, mixList.get(j - 1) % size);
+                    mixList.set((j) % size, mixList.get((j - 1) % size));
                 }
                 mixList.set(newIndex, shift);
             }
             System.out.println(mixList);
         }
-        return mixList.get((n) % size);
+        return mixList;
     }
 }

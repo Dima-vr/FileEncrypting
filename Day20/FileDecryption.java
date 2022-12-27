@@ -24,22 +24,13 @@ public class FileDecryption {
         }
     }
 
-    public static void main(String[] args) {
-        //---Part1---
-        FileDecryption test = new FileDecryption();
-        ArrayList<Long> mixedFile1 = test.mixFile(1, 1);
-        long sum1 = 0;
+    public long decode(int loops, long key){
+        ArrayList<Long> mixedFile = mixFile(loops, key);
+        long sum = 0;
         for (int i = 1; i <= 3; i++) {
-            sum1 += mixedFile1.get((mixedFile1.indexOf(0L) + (1000 * i)) % test.encryptedFileData.size());
+            sum += mixedFile.get((mixedFile.indexOf(0L) + (1000 * i)) % encryptedFileData.size());
         }
-        System.out.println("Part1: " + sum1);
-        //---Part2---
-        ArrayList<Long> mixedFile2 = test.mixFile(10, 811589153);
-        long sum2 = 0;
-        for (int i = 1; i <= 3; i++) {
-            sum2 += mixedFile2.get((mixedFile2.indexOf(0L) + (1000 * i)) % test.encryptedFileData.size());
-        }
-        System.out.println("Part2: " + sum2);
+        return sum;
     }
 
     public ArrayList<Long> mixFile(int loops, long key) {

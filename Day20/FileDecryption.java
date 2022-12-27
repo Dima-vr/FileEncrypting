@@ -62,9 +62,6 @@ public class FileDecryption {
                 if (newIndex < 0) {
                     newIndex = -(-(newIndex - 1) % size);
                     newIndex = (newIndex + size) % size;
-                    if (newIndex == size) {
-                        newIndex = size - 1;
-                    }
                 }
                 if (newIndex >= size) {
                     newIndex = (newIndex + (newIndex / size)) % size;

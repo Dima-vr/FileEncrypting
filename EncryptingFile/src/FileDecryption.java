@@ -3,7 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class FileDecryption {
-    final public ArrayList<Integer> encryptedFileData = new ArrayList<>();
+    public ArrayList<Integer> encryptedFileData = new ArrayList<>();
 
     public FileDecryption() {
         //Try to read only integers from file "EncryptedFile.txt"
@@ -23,49 +23,62 @@ public class FileDecryption {
     }
 
     public static void main(String[] args) {
+        //---Part1---
         FileDecryption test = new FileDecryption();
-        System.out.println(test.encryptedFileData);
-        ArrayList<Integer> mixedFile = test.mixFile();
-        int sum = 0;
+        ArrayList<Long> mixedFile1 = test.mixFile(1, 1);
+        long sum1 = 0;
         for (int i = 1; i <= 3; i++) {
-            sum += mixedFile.get((mixedFile.indexOf(0) + (1000 * i)) % test.encryptedFileData.size());
+            sum1 += mixedFile1.get((mixedFile1.indexOf(0L) + (1000 * i)) % test.encryptedFileData.size());
         }
-        System.out.println(mixedFile);
-        System.out.println(sum);
+        System.out.println("Part1: " + sum1);
+        //---Part2---
+        ArrayList<Long> mixedFile2 = test.mixFile(10, 811589153);
+        long sum2 = 0;
+        for (int i = 1; i <= 3; i++) {
+            sum2 += mixedFile2.get((mixedFile2.indexOf(0L) + (1000 * i)) % test.encryptedFileData.size());
+        }
+        System.out.println("Part2: " + sum2);
     }
 
-    public ArrayList<Integer> mixFile() {
+    public ArrayList<Long> mixFile(int loops, long key) {
         int size = encryptedFileData.size();
-        ArrayList<Integer> mixList = new ArrayList<>(encryptedFileData);
+        ArrayList<Long> mixList = new ArrayList<>();
+        for (Integer data : encryptedFileData) {
+            mixList.add((long) data * key);
+        }
         ArrayList<Integer> indexOfMixList = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             indexOfMixList.add(i);
         }
-        for (int i = 0; i < size; i++) {
-            //Calculate the current index in mixList
-            int currentIndex = indexOfMixList.indexOf(i);
-            int shift = mixList.get(currentIndex);
-            if (shift == 0) {
-                continue;
+        for (int times = 0; times < loops; times++) {
+            for (int i = 0; i < size; i++) {
+                //Calculate the current index in mixList
+                int currentIndex = indexOfMixList.indexOf(i);
+                Long shift = mixList.get(currentIndex);
+                //Calculate the new index where we put our element
+                long newIndex = (currentIndex + shift) % (size - 1);
+                if (newIndex < 0) {
+                    newIndex = -(-(newIndex - 1) % size);
+                    newIndex = (newIndex + size) % size;
+                    if (newIndex == size) {
+                        newIndex = size - 1;
+                    }
+                }
+                if (newIndex >= size) {
+                    newIndex = (newIndex + (newIndex / size)) % size;
+                }
+                if (newIndex == 0) {
+                    newIndex = size - 1;
+                }
+
+                //Move the element from the starting index of the element and the index where it will be
+                int indexOfIndex = indexOfMixList.get(currentIndex);
+                mixList.remove(currentIndex);
+                indexOfMixList.remove(currentIndex);
+                mixList.add((int) (newIndex), shift);
+                indexOfMixList.add((int) (newIndex), indexOfIndex);
             }
-            //Calculate the new index where we put our element
-            int newIndex = currentIndex + shift;
-            while (newIndex >= size) {
-                newIndex = (newIndex + 1) - size;
-            }
-            if (newIndex < 0) {
-                newIndex = -(-(newIndex-1) % size);
-                newIndex = newIndex + size;
-            }
-            if(newIndex == 0){
-                newIndex = size - 1;
-            }
-            int indexOfIndex = indexOfMixList.get(currentIndex);
-            //Move elements between the starting index of the element and the index where it will be
-            mixList.remove(currentIndex);
-            indexOfMixList.remove(currentIndex);
-            mixList.add(newIndex, shift);
-            indexOfMixList.add(newIndex, indexOfIndex);
+            System.out.println(mixList);
         }
         return mixList;
     }

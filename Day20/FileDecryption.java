@@ -77,7 +77,6 @@ public class FileDecryption {
                 mixList.add((int) (newIndex), shift);
                 indexOfMixList.add((int) (newIndex), indexOfIndex);
             }
-            System.out.println(mixList);
         }
         return mixList;
     }
